@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Excel Upload and Download";
+    var data = ViewBag.Data as List<Dictionary<string, string>>;
+    var error = ViewBag.Error as string;
+}
+
+<h2>Excel Upload and Download</h2>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <div style="color:red;">@error</div>
+}
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data">
+    <label>Select Excel file (.xls or .xlsx):</label><br />
+    <input type="file" name="file" accept=".xls,.xlsx" />
+    <button type="submit">Upload and Read</button>
+</form>
+
+@if (data != null && data.Any())
+{
+    <h3>Uploaded Excel Content:</h3>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                @foreach (var header in data.First().Keys)
+                {
+                    <th>@header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in data)
+            {
+                <tr>
+                    @foreach (var cell in row.Values)
+                    {
+                        <td>@cell</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h3>Download Sample Excel Files:</h3>
+<a asp-action="Download" asp-route-format=".xls" class="btn btn-primary" style="margin-right:10px;">Download XLS</a>
+<a asp-action="Download" asp-route-format=".xlsx" class="btn btn-primary">Download XLSX</a>
