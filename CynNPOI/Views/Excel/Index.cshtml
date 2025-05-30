@@ -12,8 +12,8 @@
 }
 
 <form asp-action="Upload" method="post" enctype="multipart/form-data">
-    <label>Select Excel file (.xls or .xlsx):</label><br />
-    <input type="file" name="file" accept=".xls,.xlsx" />
+    <label>Select Excel file (.xls, .xlsx, or .xlsm):</label><br />
+    <input type="file" name="file" accept=".xls,.xlsx,.xlsm" />
     <button type="submit">Upload and Read</button>
 </form>
 
@@ -45,4 +45,5 @@
 
 <h3>Download Sample Excel Files:</h3>
 <a asp-action="Download" asp-route-format=".xls" class="btn btn-primary" style="margin-right:10px;">Download XLS</a>
-<a asp-action="Download" asp-route-format=".xlsx" class="btn btn-primary">Download XLSX</a>
+<a asp-action="Download" asp-route-format=".xlsx" class="btn btn-primary" style="margin-right:10px;">Download XLSX</a>
+<a asp-action="Download" asp-route-format=".xlsm" class="btn btn-primary">Download XLSM</a>

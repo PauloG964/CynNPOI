@@ -13,6 +13,7 @@ namespace ExcelWebApp.Controllers
         {
             _excelHelper = new ExcelHelper();
         }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -28,7 +29,14 @@ namespace ExcelWebApp.Controllers
                 return View("Index");
             }
 
-            var extension = Path.GetExtension(file.FileName);
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+            if (extension != ".xls" && extension != ".xlsx" && extension != ".xlsm")
+            {
+                ViewBag.Error = "Unsupported file format. Only .xls, .xlsx, and .xlsm are supported.";
+                return View("Index");
+            }
+
             using var stream = file.OpenReadStream();
             var data = _excelHelper.ReadExcel(stream, extension);
             ViewBag.Data = data;
@@ -38,15 +46,21 @@ namespace ExcelWebApp.Controllers
         [HttpGet]
         public IActionResult Download(string format)
         {
-            if (string.IsNullOrWhiteSpace(format))
-                format = ".xlsx";
+            format = string.IsNullOrWhiteSpace(format) ? ".xlsx" : format.ToLowerInvariant();
+
+            if (format != ".xls" && format != ".xlsx" && format != ".xlsm")
+                return BadRequest("Invalid format. Supported formats are .xls, .xlsx, and .xlsm.");
 
             var fileBytes = _excelHelper.WriteExcel(format);
-            string contentType = format == ".xls" ?
-                "application/vnd.ms-excel" :
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-            string fileName = format == ".xls" ? "sample.xls" : "sample.xlsx";
+            string contentType = format switch
+            {
+                ".xls" => "application/vnd.ms-excel",
+                ".xlsx" or ".xlsm" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                _ => "application/octet-stream"
+            };
+
+            string fileName = $"sample{format}";
 
             return File(fileBytes, contentType, fileName);
         }
