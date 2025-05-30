@@ -37,9 +37,9 @@ public class ExcelHelper
         IWorkbook workbook;
 
         if (extension == ".xls")
-            workbook = new HSSFWorkbook(stream);
-        else if (extension == ".xlsx")
-            workbook = new XSSFWorkbook(stream);
+            workbook = new HSSFWorkbook(stream); // BIFF format (Excel 97-2003)
+        else if (extension == ".xlsx" || extension == ".xlsm")
+            workbook = new XSSFWorkbook(stream); // OpenXML format (macros not preserved)
         else
             throw new NotSupportedException("File extension not supported.");
 
